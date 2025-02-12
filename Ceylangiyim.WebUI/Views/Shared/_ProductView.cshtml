@@ -1,0 +1,87 @@
+﻿@model Product
+
+<div class="col-lg-3 mb-5">
+    <div class="card h-100 position-relative">
+        <!-- Sale & New Badges (Yuvarlak ve Ayrı) -->
+        <div class="position-absolute d-flex flex-column" style="top: 0.5rem; left: 0.5rem;">
+            @if (Model.DiscountRate > 0)
+            {
+                <span class="badge rounded-pill bg-danger text-white mb-1" style="font-size: 14px; padding: 4px 4px;">
+                    @Model.DiscountRate%
+                </span>
+            }
+            @if (Model.NewlyAdded)
+            {
+                <span class="badge rounded-pill bg-success text-white" style="font-size: 14px; padding: 4px 4px; mt-3;">
+                    Yeni
+                </span>
+            }
+        </div>
+
+        <!-- Favorite Button -->
+        <div class="badge position-absolute" style="top: 0.5rem; right: 0.5rem">
+            <form asp-action="Add" asp-controller="Favorites">
+                <input type="hidden" name="ProductId" value="@Model.Id" />
+                <button class="btn favorite-btn active" type="submit">
+                    <i class="bi bi-heart-fill"></i>
+                </button>
+            </form>
+        </div>
+
+        <!-- Product image-->
+        <a href="/Products/Details/@Model.Id">
+            <img class="card-img-top" src="~/Img/Products/@Model.Image" alt="@Model.Name">
+        </a>
+
+        <!-- Product details-->
+        <div class="card-body p-4">
+            <div class="text-center">
+                <!-- Product name-->
+                <h5 class="fw-bolder">@Model.Name</h5>
+
+                <!-- Product price with discount -->
+                @if (Model.DiscountedPrice.HasValue && Model.DiscountedPrice < Model.Price)
+                {
+                    <span class="text-muted text-decoration-line-through">@Model.Price.ToString("c")</span>
+                    <span class="text-danger fw-bold ms-2">@Model.DiscountedPrice.Value.ToString("c")</span>
+                }
+                else
+                {
+                    <span>@Model.Price.ToString("c")</span>
+                }
+            </div>
+        </div>
+
+        <!-- Product actions-->
+        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+            <div class="d-flex justify-content-between w-100">
+                <form action="/Cart/Add" method="post">
+                    <input type="hidden" name="ProductId" value="@Model.Id" />
+                    <div class="text-center">
+                        <button class="btn btn-outline-dark mt-auto" type="submit">
+                            <i class="bi-cart-fill me-1"></i> Sepete Ekle
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS for styling -->
+<style>
+    /* Favori butonu stil değişimi */
+    .favorite-btn {
+        background: transparent;
+        border: none;
+        font-size: 20px;
+        color: #666;
+        transition: color 0.3s ease-in-out;
+    }
+
+        .favorite-btn:hover,
+        .favorite-btn.active {
+            color: black;
+        }
+</style>

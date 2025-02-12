@@ -1,0 +1,204 @@
+﻿@model ProductDetailViewModel
+
+@{
+    ViewData["Title"] = Model.Product.Name;
+    bool hasHelperImages = !string.IsNullOrEmpty(Model.Product.HelperImage1) ||
+                           !string.IsNullOrEmpty(Model.Product.HelperImage2) ||
+                           !string.IsNullOrEmpty(Model.Product.HelperImage3);
+}
+
+
+<div class="row">
+
+    
+
+    <div class="col-xl-6 col-lg-3">
+        <div class="product-details-img mb-10">
+            <div class="tab-content" id="myTabContentpro">
+                <div class="tab-pane fade show active" id="home" role="tabpanel">
+                    <div class="product-large-img">
+                        <img src="/Img/Products/@Model.Product.Image" alt="" style="height:600px; width:100%; object-fit: cover;">
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel">
+                    <div class="product-large-img">
+                        <img src="/Img/Products/@Model.Product.HelperImage1" alt="" style="height:600px; width:100%; object-fit: cover;">
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="profile1" role="tabpanel">
+                    <div class="product-large-img">
+                        <img src="/Img/Products/@Model.Product.HelperImage2" alt="" style="height:600px; width:100%; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="shop-thumb-tab mb-30">
+            <ul class="nav" id="myTab2" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-selected="true">
+                        <img src="/Img/Products/@Model.Product.Image" alt="" style="height:200px; width:100%; object-fit: cover;">
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-selected="false">
+                        <img src="/Img/Products/@Model.Product.HelperImage1" alt="" style="height:200px; width:100%; object-fit: cover;">
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="profile-tab2" data-toggle="tab" href="#profile1" role="tab" aria-selected="false">
+                        <img src="/Img/Products/@Model.Product.HelperImage2" alt="" style="height:200px; width:100%; object-fit: cover;">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+   
+    
+    <div class="col-xl-6 col-lg-7">
+        <div class="product-details mb-30 pl-30">
+            <div class="details-cat mb-20">
+                <a href="#">@Model.Product.Category.Name</a>
+            </div>
+            <h2 class="pro-details-title mb-15">@Model.Product.Name</h2>
+            <div class="details-price mb-20">
+                @if(Model.Product.DiscountRate > 0)
+                {
+                    <span>@Model.Product.DiscountedPrice ₺</span>
+                    <span class="old-price">@Model.Product.Price ₺</span>
+                }
+                else
+                {
+                    <span>@Model.Product.Price ₺</span>
+                }
+
+               
+            </div>
+            <div class="product-variant">
+
+                <div class="product-color variant-item">
+                    <div class="variant-name">
+                        <span>Renkler</span>
+                    </div>
+                    <ul class="shop-link shop-color">
+                        <li><a href="shop.html"><span class="blue"></span></a></li>
+                        <li><a href="shop.html"><span class="green"></span> </a></li>
+                        <li><a href="shop.html"><span class="orange"></span> </a></li>
+                        <li><a href="shop.html"><span class="navy"></span> </a></li>
+                        <li><a href="shop.html"><span class="pinkish"></span> </a></li>
+                        <li><a href="shop.html"><span class="vista"></span> </a></li>
+                    </ul>
+                </div>
+
+               
+
+                <div class="product-desc variant-item">
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+                        aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.
+                    </p>
+                </div>
+
+                <div class="product-info-list variant-item">
+                    <ul>
+                        <li><span>Marka:</span>@Model.Product.Brand</li>
+                        <li><span>Ürün Kodu:</span>@Model.Product.ProductCode</li>
+                        @if(Model.Product.Stock > 0)
+                        {
+                            <li><span>Stock:</span> <span class="in-stock">Stokta var</span></li>
+                        }
+                        else{
+                            <li><span>Stock:</span> <span class="in-stock">Stokta yok</span></li>
+                        }
+                    </ul>
+                </div>
+
+                <div class="product-action-details variant-item">
+                    <div class="product-details-action">
+                        <form method="post" asp-action="Add" asp-controller="Favorites">
+                            <input type="hidden" name="ProductId" value="@Model.Product.Id" />
+                            <button class="details-action-icon" type="submit"><i class="fas fa-heart"></i></button>
+                        </form>
+                        <form method="post" asp-action="Add" asp-controller="Cart">
+                            <input type="hidden" name="ProductId" value="@Model.Product.Id" />
+
+                            <!-- Boyut Seçimi -->
+                            <div class="product-size variant-item">
+                                <div class="variant-name">
+                                    <span>Boyut</span>
+                                </div>
+                                <select name="selectedSize" class="form-control">
+                                    @foreach (var item in Model.SizeSelectList)
+                                    {
+                                        <option value="@item.Value">@item.Text</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Miktar Seçimi -->
+                            <div class="plus-minus">
+                                <div class="cart-plus-minus">
+                                    <input id="qty" step="1" min="1" name="quantity" value="1" />
+                                    <div class="dec qtybutton">-</div>
+                                    <div class="inc qtybutton">+</div>
+                                </div>
+                            </div>
+
+                            <!-- Sepete Ekle Butonu -->
+                            <div class="details-cart mt-40">
+                                <button class="btn theme-btn">Sepete Ekle</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Related items section-->
+<section class="py-5 bg-light">
+    <div class="container px-4 px-lg-5 mt-5">
+        <h2 class="fw-bolder mb-4">İlişkili Ürünler</h2>
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            @foreach (var item in Model.RelatedProducts)
+            {
+                <partial name="_ProductView2" model="item" />
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+
+
+</style>
+
+<!-- Favicon  -->
+<!-- Favicon  -->
+<link rel="icon" href="/ProductDetails/img/core-img/favicon.icon">
+
+<!-- Core Style CSS -->
+<link rel="stylesheet" href="/ProductDetails/css/core-style.css">
+<link rel="stylesheet" href="/ProductDetails/style.css">
+
+<!-- Responsive CSS -->
+<link href="/ProductDetails/css/responsive.css" rel="stylesheet">
+
+<!-- Core Style CSS -->
+<link rel="stylesheet" href="/ProductDetails/css/core-style.css">
+<link rel="stylesheet" href="/ProductDetails/style.css">
+
+<!-- Responsive CSS -->
+<!-- jQuery (Necessary for All JavaScript Plugins) -->
+<script src="/ProductDetails/js/jquery/jquery-2.2.4.min.js"></script>
+<!-- Popper js -->
+<script src="/ProductDetails/js/popper.min.js"></script>
+<!-- Bootstrap js -->
+<script src="/ProductDetails/js/bootstrap.min.js"></script>
+<!-- Plugins js -->
+<script src="/ProductDetails/js/plugins.js"></script>
+<!-- Active js -->
+<script src="/ProductDetails/js/active.js"></script>

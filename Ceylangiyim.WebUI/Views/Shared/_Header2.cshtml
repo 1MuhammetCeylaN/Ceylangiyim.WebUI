@@ -1,0 +1,231 @@
+﻿@using Ceylangiyim.WebUI.ExtensionMethods
+
+@model CartViewModel
+
+<header>
+    <div id="header-sticky" class="header-area box-90">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-xl-2 col-lg-6 col-md-6 col-3 col-sm-5 d-flex align-items-center pos-relative">
+                    <div class="basic-bar cat-toggle">
+                        <span class="bar1"></span>
+                        <span class="bar2"></span>
+                        <span class="bar3"></span>
+                    </div>
+                    <div class="logo">
+                        <a href="index.html"><img src="img/logo/logo.png" alt=""></a>
+                    </div>
+
+                    <div class="category-menu">
+                        <h4>Category</h4>
+                        <ul>
+                            <li><a href="shop.html"><i class="flaticon-shopping-cart-1"></i> Table lamp</a></li>
+                            <li><a href="shop.html"><i class="flaticon-shopping-cart-1"></i> Furniture</a></li>
+                            <li><a href="shop.html"><i class="flaticon-shopping-cart-1"></i> Chair</a></li>
+                            <li><a href="shop.html"><i class="flaticon-shopping-cart-1"></i> Men</a></li>
+                            <li><a href="shop.html"><i class="flaticon-shopping-cart-1"></i> Women</a></li>
+                            <li><a href="shop.html"><i class="flaticon-shopping-cart-1"></i> Cloth</a></li>
+                            <li><a href="shop.html"><i class="flaticon-shopping-cart-1"></i> Trend</a></li>
+                        </ul>
+                    </div>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Anasayfa</a>
+                    </li>
+                </div>
+
+                <div class="col-xl-8 col-lg-6 col-md-8 col-6 d-none d-xl-block">
+                    <div class="main-menu text-center">
+                        <nav id="mobile-menu">
+                            <ul class="menu-list">
+                                @await Component.InvokeAsync("Categories")
+
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="col-xl-2 col-lg-6 col-md-6 col-6 col-sm-7 pl-0">
+                    <div class="header-right f-right">
+                        <ul>
+                            <li class="search-btn">
+                                <a class="search-btn nav-search search-trigger" href="#"><i class="fas fa-search"></i></a>
+                            </li>
+
+                            <li class="login-btn" >
+                                <a href="javascript:void(0);" id="loginDropdownBtn"><i class="far fa-user"></i></a>
+                                <!-- Dropdown Menu -->
+                                <div class="login-dropdown-menu" id="loginDropdownMenu">
+                                    <ul>
+                                        @if (Context.User.Identity.IsAuthenticated)
+                                        {
+                                            <li><a href="/Account">Bilgilerim</a></li>
+                                            <li><a href="/MyAddresses/Index">Kayıtlı Adreslerim</a></li>
+                                            <li><a href="/Account/MyOrders">Siparişlerim</a></li>
+                                            <li><a href="/MyAddresses/Index">Yorumlarım</a></li>
+                                            @if (User.IsInRole("Admin"))
+                                            {
+                                                <li><a href="/Admin">Admin Paneline Git</a></li>
+                                            }
+                                            <li><a href="/Account/SignOut">Çıkış Yap</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li><a href="/Account/SignIn">Giriş Yap</a></li>
+                                            <li><a href="/Account/SignUp">Üye Ol</a></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
+
+
+
+                            <li class="d-shop-cart">
+                                @if (Model.CartLines.Any())
+                                {
+                                    <a href="#"><i class="flaticon-shopping-cart"></i> <span class="cart-count">@Model.CartLines.Count</span></a>
+                                    <ul class="minicart">
+                                        @foreach (var item in Model.CartLines)
+                                        {
+                                            <li>
+                                                <div class="cart-img">
+                                                    <a href="/Products/Details/@item.Product.Id">
+                                                        <img src="/Img/Products/@item.Product.Image" alt="" />
+                                                    </a>
+                                                </div>
+                                                <div class="cart-content">
+                                                    <h3>
+                                                        <a href="/Products/Details/@item.Product.Id">@item.Product.Name</a> X @item.Quantity
+                                                    </h3>
+                                                    <div class="cart-price">
+                                                        @if(@item.Product.DiscountRate > 0)
+                                                        {
+                                                            <span>İndirimli Toplam: @Model.TotalDiscountedPrice.ToString("c")</span>
+
+                                                            <br>
+                                                            <del>Orijinal Toplam: @Model.TotalOriginalPrice.ToString("c")</del>
+                                                        }
+                                                        else
+                                                        {
+                                                            <del>Orijinal Toplam: @Model.TotalOriginalPrice.ToString("c")</del>
+                                                        }
+                                                       
+                                                    </div>
+                                                </div>
+                                                <form asp-action="Remove" asp-controller="Cart">
+                                                    <input type="hidden" name="ProductId" value="@item.Product.Id" />
+                                                    <button type="submit" class="delete-btn">
+                                                        <i class="far fa-trash-alt"></i>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                                else
+                                {
+                                    <a href="/Cart"><i class="flaticon-shopping-cart"></i></a>
+                                    <ul class="minicart">
+                                        <li>Sepetinizde ürün bulunmamaktadır</li>
+                                    </ul>
+                                }
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-12 d-xl-none">
+                    <div class="mobile-menu"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<style>
+
+  
+
+
+    .delete-btn {
+        background: none; /* Arka planı kaldır */
+        border: none; /* Çerçeveyi kaldır */
+        color: red; /* Yazı rengini kırmızı yap */
+        cursor: pointer; /* Üzerine gelince el işareti çıkması için */
+        font-size: 16px; /* İkon boyutu */
+    }
+
+        .delete-btn:hover {
+            color: darkred; /* Üzerine gelince rengi koyulaştır */
+        }
+
+
+
+    /* Dropdown Menu */
+    .login-dropdown-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        width: 150px;
+        border-radius: 4px;
+    }
+
+        .login-dropdown-menu ul {
+            list-style: none;
+            padding: 10px 0;
+            margin: 0;
+        }
+
+            .login-dropdown-menu ul li {
+                padding: 8px 12px;
+            }
+
+                .login-dropdown-menu ul li a {
+                    color: #000; /* Siyah metin rengi */
+                    text-decoration: none;
+                    display: block;
+                }
+
+                /* Hover effect: Turuncu arka plan rengi, metin siyah */
+                .login-dropdown-menu ul li:hover {
+                    background-color: orange; /* Turuncu arka plan rengi */
+                }
+
+                .login-dropdown-menu ul li a:hover {
+                    color: #000; /* Yazı rengi siyah kalır */
+                }
+
+    /* Show the dropdown when hovering over the login-btn */
+    .login-btn:hover .login-dropdown-menu,
+    #loginDropdownBtn:focus + .login-dropdown-menu {
+        display: block;
+    }
+
+    /* Login button text on hover */
+    .login-btn:hover a {
+        color: #000; /* Siyah renk */
+    }
+
+
+</style>
+<script>
+    // Toggle dropdown on click
+    document.getElementById("loginDropdownBtn").addEventListener("click", function () {
+        var dropdownMenu = document.getElementById("loginDropdownMenu");
+        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+    });
+
+    // Close the menu if clicked outside
+    document.addEventListener("click", function (e) {
+        var dropdownMenu = document.getElementById("loginDropdownMenu");
+        var loginBtn = document.getElementById("loginDropdownBtn");
+
+        if (!loginBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+            dropdownMenu.style.display = "none";
+        }
+    });
+</script>

@@ -1,0 +1,130 @@
+﻿@using Ceylangiyim.WebUI.ExtensionMethods
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom box-shadow fixed-top">
+        <div class="container">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">E_Ticaret.WebUI</a>
+
+            <!-- Mobil Menü Butonu -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Yandan Açılan Menü -->
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menü</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav m-auto">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Anasayfa</a>
+                        </li>
+                        @await Component.InvokeAsync("Categories")
+                    </ul>
+
+                    <form action="/Products" class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                        <input name="q" type="search" class="form-control" placeholder="Ürün Ara..." aria-label="Search">
+                    </form>
+
+                    @if (Context.User.Identity.IsAuthenticated)
+                    {
+                        <div class="dropdown me-4">
+                            <a class="dropdown-toggle nav-link text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-fill"></i> Hesabım
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/Account">Kullanıcı Bilgilerim</a></li>
+                                <li><a class="dropdown-item" href="/MyAddresses/Index">Kayıtlı Adreslerim</a></li>
+                                <li><a class="dropdown-item" href="/Account/MyOrders">Siparişlerim</a></li>
+                                <li><a class="dropdown-item" href="/Account">Değerlendirmelerim</a></li>
+
+                                @if (User.IsInRole("Admin"))
+                                {
+                                    <li><a class="dropdown-item" href="/Admin">Admin Paneline Git</a></li>
+                                }
+
+                                <li class="text-center"><a class=" btn btn-danger" href="/Account/SignOut">Oturumu Kapat</a></li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="dropdown me-4">
+                            <a class="dropdown-toggle nav-link text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person"></i> Giriş Yap
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/Account/SignIn">Giriş</a></li>
+                                <li><a class="dropdown-item" href="/Account/SignUp">Üye Ol</a></li>
+                            </ul>
+                        </div>
+                    }   
+
+                    <div class="dropdown me-4">
+                        <a class="nav-link text-dark" href="/Favorites">
+                            @{
+                                var favorites = Context.Session.GetJson<List<Product>>("GetFavorites");
+                                if (favorites is not null && favorites.Count > 0)
+                                {
+                                    <i class="bi bi-heart-fill"></i> @:Favorilerim (@favorites.Count)
+                                }
+                                else
+                                {
+                                    <i class="bi bi-heart"></i> @:Favorilerim
+                                }
+                            }
+                        </a>
+                    </div>
+
+                    <div class="dropdown me-4">
+                        @{
+                            var cart = Context.Session.GetJson<Ceylangiyim.Service.Concrete.CartService>("Cart");
+                            if (cart != null && cart.CartLines.Count > 0)
+                            {
+                                <a class="dropdown-toggle nav-link text-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-cart-fill"></i> Sepetim
+                                    <span class="badge bg-danger text-white ms-1 rounded-pill">
+                                        @cart.CartLines.Count
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    @foreach (var item in cart.CartLines)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" href="/Products/Details/@item.Product.Id">
+                                                <img src="/Img/Products/@item.Product.Image" alt="" height="40" />
+                                                @item.Product.Name
+                                            </a>
+                                        </li>
+                                    }
+                                    <li class="text-center"><a class="btn btn-warning m-auto" href="/Cart">Sepete Git</a></li>
+                                </ul>
+                            }
+                            else
+                            {
+                                <a class="nav-link text-dark" href="/Cart">
+                                    <i class="bi bi-cart"></i> Sepetim
+                                </a>
+                            }
+                        }
+                    </div>
+
+                    <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ContactUs">İletişim</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<!-- CSS -->
+<style>
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1030;
+    }
+</style>

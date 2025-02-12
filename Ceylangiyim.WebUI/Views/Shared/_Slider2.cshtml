@@ -1,0 +1,72 @@
+﻿@model IEnumerable<Slider>
+
+<section class="slider-area pos-relative">
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            @for (var i = 0; i < Model.Count(); i++)
+            {
+                <button type="button" data-bs-target="#carouselExampleCaptions"
+                        data-bs-slide-to="@i"
+                        class="@(i == 0 ? "active" : "")"
+                        aria-current="@(i == 0 ? "true" : "false")"
+                        aria-label="Slide @(i + 1)">
+                </button>
+            }
+        </div>
+        <div class="carousel-inner">
+            @foreach (var item in Model.Select((value, index) => new { Value = value, Index = index }))
+            {
+                <div class="carousel-item @(item.Index == 0 ? "active" : "") single-slider slide-1-style slide-height d-flex align-items-center"
+                     style="background-image: url('/Img/Sliders/@item.Value.Image');">
+                    <div class="shape-title bounce-animate">
+                        <h2>@item.Value.Title</h2>
+                    </div>
+                    <div class="shape-icon bounce-animate">
+                        <img src="/img/slider/shape-icon.png" alt="">
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xl-7">
+                                <div class="slide-content">
+                                    <span data-animation="fadeInRight" data-delay=".2s">@item.Value.Description</span>
+                                    <h1 data-animation="fadeInUp" data-delay=".5s">
+                                        @item.Value.Title
+                                    </h1>
+                                    <div class="slide-btn">
+                                        <a class="btn theme-btn" href="@item.Value.Link" data-animation="fadeInLeft" data-delay=".7s">Detayları Gör</a>
+                                        <a class="btn white-btn" href="/shop" data-animation="fadeInRight" data-delay=".9s">Mağazaya Git</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-5">
+                                <div class="slide-shape1" data-animation="bounceInRight" data-delay=".9s">
+                                    <img src="/img/slider/shape1.png" alt="">
+                                </div>
+                                <div class="slide-shape2" data-animation="bounceInRight" data-delay="1.2s">
+                                    <img src="/img/slider/shape2.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</section>
+
+<script>
+    var myCarousel = document.querySelector('#carouselExampleCaptions')
+    var carousel = new bootstrap.Carousel(myCarousel, {
+        interval: 2000, // geçiş aralığı
+        ride: 'carousel' // otomatik başlat
+    })
+</script>

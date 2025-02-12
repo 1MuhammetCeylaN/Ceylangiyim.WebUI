@@ -1,0 +1,123 @@
+﻿@model Product
+
+<div class="product-wrapper mb-20" style="height:400px;">
+    <form action="/Cart/Add" method="post" id="cartForm-@Model.Id">
+        <input type="hidden" name="ProductId" value="@Model.Id" />
+
+        <div class="product-img mb-25">
+            <a>
+                <img src="~/Img/Products/@Model.Image" alt="">
+                <img class="secondary-img" src="~/Img/Products/@Model.HelperImage1" alt="">
+            </a>
+
+            <!-- Etiketler -->
+            <div class="product-labels">
+                @if (Model.DiscountRate > 0)
+                {
+                    <span class="discount-label">-@Model.DiscountRate%</span>
+                }
+                @if (Model.NewlyAdded)
+                {
+                    <span class="new-label">Yeni</span>
+                }
+            </div>
+
+            <div class="product-action text-center">
+                <a href="#" title="Sepete Ekle" onclick="document.getElementById('cartForm-@Model.Id').submit(); return false;">
+                    <i class="flaticon-shopping-cart"></i>
+                </a>
+                <a href="/Products/Details/@Model.Id" title="Ürünü İncele">
+                    <i class="flaticon-eye"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+
+
+    <div class="product-content">
+@*         <div class="pro-cat mb-10">
+            <a href="shop.html"></a>
+        </div> *@
+        <h4>
+            <a href="/Products/Details/@Model.Id">@Model.Name</a>
+        </h4>
+        <div class="product-meta">
+            @if (Model.DiscountRate > 0)
+            {
+                <div class="pro-price">
+                    <span>@Model.DiscountedPrice</span>
+                    <span class="old-price">@Model.Price</span>
+                </div>
+            }
+            else
+            {
+                <div class="pro-price">
+                    <span>@Model.Price</span>
+                </div>
+            }
+        </div>
+        <div class="product-wishlist">
+            <a href="javascript:void(0);" onclick="addToFavorites(@Model.Id);"><i class="far fa-heart" title="Wishlist"></i></a>
+        </div>
+    </div>
+</div>
+<style>
+    .product-img a img {
+        width: 100%; /* Genişlik tam olsun */
+        height: 250px; /* İstediğin yüksekliği ayarla */
+        object-fit: cover; /* Resmi kırparak tam sığdır */
+        display: block;
+    }
+
+
+
+    .product-labels {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        z-index: 10; /* Üstte kalmasını sağla */
+    }
+
+    .discount-label, .new-label {
+        background: #ff4d4d;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 5px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .new-label {
+        background: #28a745;
+    }
+
+    /* Hover durumunda etiketlerin kaybolmasını engelle */
+    .product-img:hover .product-labels {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+</style>
+<script>
+    function addToFavorites(productId) {
+        // Formu oluştur
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/Favorites/Add"; // Favorilere ekleme işlemi yapılacak endpoint
+
+        // ProductId'yi hidden olarak ekle
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "ProductId";
+        input.value = productId;
+        form.appendChild(input);
+
+        // Formu body'e ekle ve submit et
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>

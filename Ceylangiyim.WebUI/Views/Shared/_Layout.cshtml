@@ -1,0 +1,76 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - E_Ticaret.WebUI</title>
+    <script type="importmap"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" >
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/E_Ticaret.WebUI.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+
+
+
+
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/animate.min.css">
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/magnific-popup.css">
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/fontawesome-all.min.css">
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/flaticon.css">
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/meanmenu.css">
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/meanmenu.css">
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/slick.css">
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/default.css">
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/style.css">
+    <link rel="stylesheet" href="/Fashion-Ecommerce-Template-main/css/responsive.css">
+
+    
+
+</head>
+<body>
+
+
+    @await Component.InvokeAsync("Header")
+
+    <div class="container-fluid">
+        @Html.Raw(TempData["Message"])
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <partial name="_Footer" />
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" ></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+
+
+
+    <script src="/Fashion-Ecommerce-Template-main/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/popper.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/bootstrap.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/owl.carousel.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/isotope.pkgd.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/one-page-nav-min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/slick.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/jquery.meanmenu.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/ajax-form.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/wow.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/jquery.scrollUp.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/jquery.final-countdown.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/imagesloaded.pkgd.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/jquery.magnific-popup.min.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/plugins.js"></script>
+    <script src="/Fashion-Ecommerce-Template-main/js/main.js"></script>
+    
+</body>
+</html>

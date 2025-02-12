@@ -1,0 +1,108 @@
+﻿@model IEnumerable<Order>
+
+@{
+    ViewData["Title"] = "Siparişlerim";
+}
+
+<h1 class="mb-4 text-center text-primary">Siparişlerim</h1>
+
+<table class="table table-hover table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>#</th>
+            <th>Sipariş Özeti</th>
+            <th>Toplam Tutar</th>
+            <th>Tarih</th>
+            <th>Ürün Sayısı</th>
+            <th>Durum</th>
+            <th>Detaylar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="table-light">
+                <td><i class="fas fa-box"></i></td>
+                <td>@Html.DisplayFor(modelItem => item.ProductName)</td>
+                <td class="text-success fw-bold">
+                    @(
+                        (item.TotalPrice < 1000 ? item.TotalPrice + 99 : item.TotalPrice)
+                        .ToString("C")
+                        )
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.OrderDate)</td>
+                <td>3</td>
+                <td>
+                    <span class="badge @(item.OrderState == EnumOrderState.Approved ? "bg-success" : "bg-warning")">
+                        @Html.DisplayFor(modelItem => item.OrderState)
+                    </span>
+                </td>
+                <td>
+                    <button class="btn btn-info btn-sm" onclick="toggleDetails(@item.Id)">Detayları Göster</button>
+                </td>
+            </tr>
+            <tr id="details-@item.Id" class="d-none">
+                <td colspan="7">
+                    <table class="table table-sm table-striped">
+                        <thead class="bg-secondary text-white">
+                            <tr>
+                                <th>Ürün</th>
+                                <th>Fiyat</th>
+                                <th>Miktar</th>
+                                <th>Toplam</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item2 in item.OrderLines)
+                            {
+                                @if (item2.Product == null)
+                                {
+                                    <tr>
+                                        <td><span>Ürün detayına ulaşılamıyor</span></td>
+                                        <td colspan="3"><span>Ürün detayına ulaşılamıyor</span></td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>@item2.Product.Name</td>
+                                        <td>
+                                            @if (item2.Product.DiscountRate > 0)
+                                            {
+                                                @item2.Product.DiscountedPrice.Value.ToString("C")
+                                            }
+                                            else
+                                            {
+                                                @item2.UnitPrice.ToString("C")
+                                            }
+                                        </td>
+                                        <td>@item2.Quantity</td>
+                                        <td>@((item2.Quantity * item2.UnitPrice).ToString("C"))</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+
+                        @if (item.OrderLines.All(x => x.Product == null))
+                        {
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="text-center">
+                                        <span>Ürün detayına şuan ulaşılamıyor. Geçmişte sipariş ettiğiniz ürün mağazamızdan kaldırılmış olabilir!</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        }
+                    </table>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    function toggleDetails(orderId) {
+        var row = document.getElementById("details-" + orderId);
+        row.classList.toggle("d-none");
+    }
+</script>

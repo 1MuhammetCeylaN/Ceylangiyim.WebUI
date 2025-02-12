@@ -1,0 +1,154 @@
+﻿@model CartViewModel
+
+@{
+    ViewData["Title"] = "Sepetim";
+}
+
+<section class="cart-area pt-100 pb-100">
+    <div class="container">
+        <div class="row">
+            @if (Model.CartLines.Any())
+            {
+                <div class="col-12">
+                        <div class="table-content table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th class="product-thumbnail">Ürün</th>
+                                        <th class="cart-product-name">Adı</th>
+                                        <th class="product-price">Birim Fiyatı</th>
+                                        <th class="product-quantity">Adet</th>
+                                        <th class="product-subtotal">Toplam</th>
+                                        <th class="product-remove">Sil</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.CartLines)
+                                    {
+                                        <tr>
+                                        <td class="product-thumbnail"><a href="/Products/Details/@item.Product.Id"><img src="/Img/Products/@item.Product.Image" alt=""></a></td>
+                                            <td class="product-name"><a href="/Products/Details/@item.Product.Id">@item.Product.Name </a></td>
+                                        @if (item.Product.DiscountRate > 0)
+                                        {
+                                            <td class="product-price">
+                                                <div class="new-price">@item.Product.DiscountedPrice</div>
+                                                <div class="old-price"><del>@item.Product.Price</del></div>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="product-price">
+                                                <div class="new-price">@item.Product.Price</div>
+                                            </td>
+                                        }
+
+
+                                        <td class="product-quantity">
+                                            <form method="post" asp-action="UpdateQuantity" asp-controller="Cart">
+                                                <input type="hidden" name="ProductId" value="@item.Product.Id">
+
+                                                <!-- Boyut Seçimi -->
+                                                <input type="hidden" name="selectedSize" value="@item.Product.Name">  <!-- Burada beden bilgisini seçtiğiniz 'Name' veya 'selectedSize' ile eşleştirebilirsiniz -->
+
+                                                <div class="cart-plus-minus">
+                                                    <!-- Miktar input'u burada -->
+                                                    <input type="number" name="quantity" class="quantity-input" value="@item.Quantity" min="1" oninput="validateQuantity(this)">
+                                                    <div class="dec qtybutton">-</div>
+                                                    <div class="inc qtybutton">+</div>
+                                                </div>
+
+                                                <!-- Sepeti Güncelle butonu -->
+                                                <div class="coupon2">
+                                                    <button type="submit" class="btn theme-btn update-btn" style="font-size:10px; padding:20px 20px;">Sepeti Güncelle</button>
+                                                </div>
+                                            </form>
+
+                                        </td>
+
+
+                                        <td class="product-subtotal">
+                                            <span class="amount">
+                                                @if (item.Product.DiscountRate > 0)
+                                                {
+                                                // DiscountedPrice varsa, discounted price'ı göster ve eski fiyatı çiz
+                                                    <div class="new-price">@((item.Quantity * item.Product.DiscountedPrice.Value).ToString("c"))</div>
+                                                    <div class="old-price"><del>@((item.Quantity * item.Product.Price).ToString("c"))</del></div>
+                                                }
+                                                else
+                                                {
+                                                // DiscountedPrice yoksa, sadece normal price'ı göster
+                                                    <div class="new-price">@((item.Quantity * item.Product.Price).ToString("c"))</div>
+                                                }
+                                            </span>
+                                        </td>
+
+                                            <td>
+                                            <form asp-action="Remove" asp-controller="Cart">
+                                                <input type="hidden" name="ProductId" value="@item.Product.Id" />
+                                                <input type="hidden" name="selectedSize" value="@item.Product.Name" />  <!-- Beden bilgisini gönderiyoruz -->
+
+                                                <button type="submit" class="delete-btn">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+                                            </form>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="coupon-all">
+                                    <div class="coupon">
+                                        <input id="coupon_code" class="input-text" name="coupon_code" value="" placeholder="Coupon code" type="text">
+                                        <button class="btn theme-btn-2" name="apply_coupon" type="submit">Kuponu Uygula</button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5 ml-auto">
+                                <div class="cart-page-total">
+                                    <h2>Sepet Toplamı</h2>
+                                    <ul class="mb-20">
+                                        <li>Ara Toplam <span>@Model.TotalPrice.ToString("c")</span></li>
+                                        <li>Kargo <span> @(Model.TotalPrice > 999 ? "Ücretsiz" : Model.CartLines.Any() ? "99₺" : "0₺")</span></li>
+                                        <li>
+                                            Sipariş Toplamı <span>
+                                                @(Model.TotalPrice > 999 ? Model.TotalPrice.ToString("c") : (Model.CartLines.Any() ? Model.TotalPrice + 99 : Model.TotalPrice.ToString("c")))
+                                            </span>
+                                        </li>
+                                    </ul>
+                                    <a class="btn theme-btn mt-2" href="/">Alışverişe devam et</a>
+                                    <a class="btn theme-btn mt-2" href="/Cart/Checkout">Satın Al</a>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            }
+            else
+            {
+                <div class="container">
+                    <div class="alert alert-warning my-5">
+                        <h3>Sepetinizde Ürün Bulunmamaktadır!</h3>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+    </div>
+</section>
+
+<script>
+    // Miktar input'unu kontrol et
+    function validateQuantity(input) {
+        if (parseInt(input.value) < 1) {
+            input.value = 1;  // Değer 1'den küçükse 1 yap
+        }
+    }
+</script>
+
+

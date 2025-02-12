@@ -1,0 +1,93 @@
+﻿@model  List<Product>
+@{
+    ViewData["Title"] = "Favorilerim";
+}
+
+<section class="cart-area pt-100 pb-100">
+    <div class="container">
+        <div class="row">
+            @if (Model.Any())
+            {
+                <div class="col-12">
+                    <div class="table-content table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="product-thumbnail">Ürün</th>
+                                    <th class="cart-product-name">Adı</th>
+                                    <th class="product-price">Fiyat</th>
+                                    <th class="product-quantity">Sepete Ekle</th>
+                                    <th class="product-remove">Sil</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td class="product-thumbnail"><a href="/Products/Details/@item.Id"><img src="/Img/Products/@item.Image" alt=""></a></td>
+                                        <td class="product-name"><a href="/Products/Details/@item.Id">@item.Name</a></td>
+                                        @if (item.DiscountRate > 0)
+                                        {
+                                            <td class="product-price">
+                                                <span class="amount">@item.DiscountedPrice</span>
+                                                <del class="amount mx-4">@item.Price</del>
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="product-price">
+                                                <span class="amount">@item.Price</span>
+                                            </td>
+                                        }
+
+
+                                        <td class="product-quantity">
+                                            @* <form method="post" asp-action="UpdateQuantity" asp-controller="Favorites">
+                                                <input type="hidden" name="ProductId" value="@item.Id">
+                                                <div class="cart-plus-minus">
+                                                    <input type="text" name="quantity" class="quantity-input" value="@item.Quantity">
+                                                    <div class="dec qtybutton">-</div>
+                                                    <div class="inc qtybutton">+</div>
+                                                </div>
+                                            </form> *@
+
+                                            <form method="post" asp-action="Add" asp-controller="Cart">
+                                                <input type="hidden" name="ProductId" value="@item.Id" />
+                                                <button class="btn theme-btn-2" type="submit">Sepete Ekle</button>
+                                            </form>
+                                        </td>
+
+
+
+                                        <td>
+                                            <form asp-action="Remove" asp-controller="Favorites">
+                                                <input type="hidden" name="ProductId" value="@item.Id" />
+                                                <button type="submit" class="delete-btn">
+                                                    <i class="fa fa-times"></i>
+                                                </button>
+
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                   
+                    
+                </div>
+            }
+            else
+            {
+                <div class="container">
+                    <div class="alert alert-warning my-5">
+                        <h3>Favorilerinizde Ürün Bulunmamaktadır!</h3>
+                    </div>
+                </div>
+            }
+        </div>
+
+
+    </div>
+</section>
+
