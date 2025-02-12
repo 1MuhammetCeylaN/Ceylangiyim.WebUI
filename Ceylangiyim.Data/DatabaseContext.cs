@@ -35,8 +35,8 @@ namespace Ceylangiyim.Data
 
 
             // Free Host
-            // optionsBuilder.UseSqlServer(@"workstation id=ceylan20.mssql.somee.com;packet size=4096;user id=ceylanm_SQLLogin_1;pwd=pll59654gg;data source=ceylan20.mssql.somee.com;persist security info=False;initial catalog=ceylan20;TrustServerCertificate=True");
-            // base.OnConfiguring(optionsBuilder);
+             optionsBuilder.UseSqlServer(@"workstation id=MCgiyim.mssql.somee.com;packet size=4096;user id=ceylangiyim_SQLLogin_1;pwd=zxayl6tpk7;data source=MCgiyim.mssql.somee.com;persist security info=False;initial catalog=MCgiyim;TrustServerCertificate=True");
+            base.OnConfiguring(optionsBuilder);
 
             // optionsBuilder.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
 
