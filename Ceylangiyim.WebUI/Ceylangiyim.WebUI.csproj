@@ -15,6 +15,7 @@
     <Folder Include="Areas\admin\Models\" />
     <Folder Include="wwwroot\Img\Brands\" />
     <Folder Include="wwwroot\Img\Categories\" />
+    <Folder Include="wwwroot\Img\ProductsColors\" />
     <Folder Include="wwwroot\Img\News\" />
     <Folder Include="wwwroot\Img\Sliders\" />
     <Folder Include="wwwroot\Img\Products\" />

@@ -33,6 +33,81 @@ namespace Ceylangiyim.WebUI.Controllers
             _databaseContext = databaseContext;
         }
 
+
+
+
+
+
+        [HttpPost]
+        public IActionResult Index(string couponCode)
+        {
+            var cart = GetCart();
+
+            var filteredCartLines = cart.CartLines
+                .Where(c => _databaseContext.Products.Any(p => p.Id == c.ProductId))
+                .ToList();
+
+            decimal totalPrice = filteredCartLines.Sum(c => c.Quantity *
+                (_databaseContext.Products
+                    .Where(p => p.Id == c.ProductId)
+                    .Select(p => p.DiscountedPrice ?? p.Price)
+                    .FirstOrDefault()));
+
+            decimal discountAmount = 0;
+
+            if (!string.IsNullOrWhiteSpace(couponCode))
+            {
+                var coupon = _databaseContext.Coupons.FirstOrDefault(c =>
+                    c.Code == couponCode && c.IsActive && c.ExpirationDate > DateTime.Now);
+
+                if (coupon == null)
+                {
+                    TempData["CouponError"] = "Geçersiz veya süresi dolmuş kupon kodu.";
+                }
+
+
+                else
+                {
+                    if (coupon.Discount.HasValue)
+                    {
+                        discountAmount = (totalPrice * coupon.Discount.Value) / 100;
+                        
+                    }
+                    else if (coupon.DiscountAmount.HasValue)
+                    {
+                        discountAmount = coupon.DiscountAmount.Value;
+                    }
+
+                    totalPrice -= discountAmount;
+                    if (totalPrice < 0) totalPrice = 0;
+
+                    TempData["CouponSuccess"] = "Kupon başarıyla uygulandı!";
+
+                    if (coupon != null)
+                    {
+                        HttpContext.Session.SetString("AppliedCouponCode", couponCode); // Kupon kodunu session'a kaydet
+                        TempData["CouponSuccess"] = "Kupon başarıyla uygulandı!";
+                    }
+                }
+
+                ViewBag.CouponCode = couponCode; // Kupon kodunu sakla
+                ViewBag.DiscountAmount = discountAmount; // İndirim miktarını sakla
+            }
+
+            var model = new CartViewModel()
+            {
+                CartLines = filteredCartLines,
+                TotalPrice = totalPrice,
+                CouponPrice = discountAmount,
+                
+            };
+
+            return View(model);
+        }
+
+
+
+
         public IActionResult Index()
         {
             var cart = GetCart();
@@ -40,6 +115,9 @@ namespace Ceylangiyim.WebUI.Controllers
             var filteredCartLines = cart.CartLines
      .Where(c => _databaseContext.Products.Any(p => p.Id == c.ProductId))
      .ToList();
+
+
+
 
             var model = new CartViewModel()
             {
@@ -203,13 +281,58 @@ namespace Ceylangiyim.WebUI.Controllers
                 }
             }
 
-            // Aktif ürünleri ve güncel fiyatları kullanarak toplam fiyatı hesaplıyoruz
+            // Sepetteki ürünlerin toplam fiyatını hesaplıyoruz
+            decimal totalPrice = filteredCartLines.Sum(c => c.Quantity *
+                (_databaseContext.Products
+                    .Where(p => p.Id == c.ProductId)
+                    .Select(p => p.DiscountedPrice.HasValue ? p.DiscountedPrice.Value : p.Price)
+                    .FirstOrDefault()));
+
+            decimal discountAmount = 0;
+
+            // Kupon kodu kontrolü ve indirimi hesaplama
+            var couponCode = HttpContext.Session.GetString("AppliedCouponCode");
+            if (!string.IsNullOrWhiteSpace(couponCode))
+            {
+                var coupon = _databaseContext.Coupons.FirstOrDefault(c =>
+                    c.Code == couponCode && c.IsActive && c.ExpirationDate > DateTime.Now);
+
+                if (coupon == null)
+                {
+                    TempData["CouponError"] = "Geçersiz veya süresi dolmuş kupon kodu.";
+                }
+                else
+                {
+                    // Kupon indirimi hesaplanacak
+                    if (coupon.Discount.HasValue)
+                    {
+                        discountAmount = (totalPrice * coupon.Discount.Value) / 100; // Yüzdelik indirim
+                    }
+                    else if (coupon.DiscountAmount.HasValue)
+                    {
+                        discountAmount = coupon.DiscountAmount.Value; // Sabit tutar indirim
+                    }
+
+                    // İndirimli toplam fiyatı hesapla
+                    totalPrice -= discountAmount;
+
+                    // Eğer fiyat negatif olursa sıfır yap
+                    if (totalPrice < 0)
+                        totalPrice = 0;
+
+                    // Kupon kodunu session'a kaydet
+                    HttpContext.Session.SetString("AppliedCouponCode", couponCode);
+                    TempData["CouponSuccess"] = "Kupon başarıyla uygulandı!";
+                }
+            }
+
+            // Modeli oluşturuyoruz
             var model = new CheckoutViewModel()
             {
-                CartProducts = filteredCartLines, // Yalnızca aktif ürünler
-                TotalPrice = filteredCartLines.Sum(c => c.Quantity *
-                    (c.Product.DiscountedPrice.HasValue ? c.Product.DiscountedPrice.Value : c.Product.Price)), // Güncel fiyat hesaplama
-                Addresses = await _addressService.GetAllAsync(a => a.AppUserId == appUser.Id && a.IsActive)
+                CartProducts = filteredCartLines,
+                TotalPrice = totalPrice, // İndirimli toplam fiyat
+                AppliedCouponDiscount = discountAmount, // Uygulanan kupon indirimi
+                Addresses = await _addressService.GetAllAsync(a => a.AppUserId == appUser.Id && a.IsActive),
             };
 
             return View(model);
@@ -217,12 +340,64 @@ namespace Ceylangiyim.WebUI.Controllers
 
 
 
+        private decimal GetAppliedCouponDiscount()
+        {
+            // Eğer kupon varsa, indirimi hesapla
+            var couponCode = HttpContext.Session.GetString("AppliedCouponCode");
+            if (!string.IsNullOrEmpty(couponCode))
+            {
+                var coupon = _databaseContext.Coupons.FirstOrDefault(c => c.Code == couponCode && c.IsActive && c.ExpirationDate > DateTime.Now);
+                if (coupon != null)
+                {
+                    // Kupon indirimi hesaplanacak
+                    var totalPrice = GetCart().CartLines.Sum(c => c.Quantity *
+                        (_databaseContext.Products
+                            .Where(p => p.Id == c.ProductId)
+                            .Select(p => (p.DiscountedPrice.HasValue ? p.DiscountedPrice.Value : p.Price))
+                            .FirstOrDefault()));
+
+                    if (coupon.Discount.HasValue) // Yüzdelik indirim
+                    {
+                        return (totalPrice * coupon.Discount.Value) / 100;
+                    }
+                    else if (coupon.DiscountAmount.HasValue) // Sabit tutar indirim
+                    {
+                        return coupon.DiscountAmount.Value;
+                    }
+                }
+            }
+
+            return 0; // Eğer geçerli kupon yoksa
+        }
 
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Checkout(string CardNumber, string CardNameSurname, string CardMonth, string CardYear, string CVV, string DeliveryAddress, string BillingAddress)
         {
             var cart = GetCart();
+
+            var filteredCartLines = new List<CartLine>();
+            foreach (var cartLine in cart.CartLines)
+            {
+                var product = await _databaseContext.Products
+                    .FirstOrDefaultAsync(p => p.Id == cartLine.ProductId && p.IsActive);
+
+                if (product != null)
+                {
+                    cartLine.Product = product;
+                    filteredCartLines.Add(cartLine);
+                }
+            }
+
+            decimal totalPrice = filteredCartLines.Sum(c => c.Quantity *
+                (_databaseContext.Products
+                    .Where(p => p.Id == c.ProductId)
+                    .Select(p => p.DiscountedPrice.HasValue ? p.DiscountedPrice.Value : p.Price)
+                    .FirstOrDefault()));
+
+            decimal discountAmount = GetAppliedCouponDiscount();
+            totalPrice -= discountAmount;
+            if (totalPrice < 0) totalPrice = 0;
 
             var appUser = await _appUserService.GetAsync(x => x.UserGuid.ToString() == HttpContext.User.FindFirst("UserGuid").Value);
             if (appUser == null) { return RedirectToAction("SignIn", "Account"); }
@@ -231,7 +406,7 @@ namespace Ceylangiyim.WebUI.Controllers
             var model = new CheckoutViewModel()
             {
                 CartProducts = cart.CartLines,
-                TotalPrice = cart.CartLines.Sum(p => (p.Product.DiscountedPrice ?? p.Product.Price) * p.Quantity), // Güncellendi!
+                TotalPrice = totalPrice,
                 Addresses = addresses
             };
 
@@ -244,6 +419,9 @@ namespace Ceylangiyim.WebUI.Controllers
             var faturaAdresi = addresses.FirstOrDefault(a => a.AddressGuid.ToString() == BillingAddress);
             var teslimatAdresi = addresses.FirstOrDefault(a => a.AddressGuid.ToString() == DeliveryAddress);
 
+
+            
+
             // Ödeme İşlemi
 
             var siparis = new Order
@@ -254,7 +432,8 @@ namespace Ceylangiyim.WebUI.Controllers
 
                 CustomerId = appUser.UserGuid.ToString(),
                 OrderDate = DateTime.Now,
-                TotalPrice = cart.CartLines.Sum(p => (p.Product.DiscountedPrice ?? p.Product.Price) * p.Quantity), // Güncellendi!
+                //TotalPrice = cart.CartLines.Sum(p => (p.Product.DiscountedPrice ?? p.Product.Price) * p.Quantity), // Güncellendi!
+                TotalPrice = totalPrice,
                 OrderNumber = Guid.NewGuid().ToString(),
                 OrderState = 0,
                 ProductName = string.Join(", ", cart.CartLines.Select(p => p.Product.Name)),
@@ -357,7 +536,7 @@ namespace Ceylangiyim.WebUI.Controllers
                     Name = item.Product.Name,
                     Category1 = "Kategori",
                     ItemType = BasketItemType.PHYSICAL.ToString(),
-                    Price = (unitPrice * item.Quantity).ToString().Replace(",", ".")
+                    Price = (unitPrice * item.Quantity - (discountAmount / 2)).ToString().Replace(",", ".")
                 });
             }
 

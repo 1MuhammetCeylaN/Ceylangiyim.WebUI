@@ -145,6 +145,7 @@ namespace Ceylangiyim.WebUI.Areas.admin.Controllers
                 if (!string.IsNullOrEmpty(news.Image))
                 {
                     FileHelper.FileRemover(news.Image, "/Img/News/");
+                   // FileHelper.FileRemover(news.Image);
                 }
                 _context.News.Remove(news);
             }

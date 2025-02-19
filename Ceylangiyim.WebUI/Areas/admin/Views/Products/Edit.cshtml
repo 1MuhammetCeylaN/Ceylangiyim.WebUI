@@ -53,7 +53,11 @@
                 <input asp-for="Stock" class="form-control" />
                 <span asp-validation-for="Stock" class="text-danger"></span>
             </div>
-
+            <div class="form-group">
+                <label asp-for="Color" class="control-label"></label>
+                <input asp-for="Color" class="form-control" />
+                <span asp-validation-for="Color" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label"></label>
                 <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
@@ -192,4 +196,51 @@
 <div>
     <a asp-action="Index" class="btn btn-outline-dark">Listeye Dön</a>
 </div>
+
+<h3>Renk Seçenekleri</h3>
+<form asp-action="AddColor" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="productId" value="@Model.Id" />
+
+    <label>Renk Adı</label>
+    <input type="text" name="colorName" class="form-control" required />
+
+    <label>Renk Görseli</label>
+    <input type="file" name="image" class="form-control" required />
+
+    <label>Yönlendirme Linki</label>
+    <input type="text" name="redirectUrl" class="form-control" />
+
+    <button type="submit" class="btn btn-primary mt-2">Ekle</button>
+</form>
+
+<h4 class="mb-3">Mevcut Renkler</h4>
+<div class="row">
+    @foreach (var color in Model.ProductColors)
+    {
+        <div class="col-md-3 col-sm-6 mb-4 d-flex justify-content-center">
+            <div class="card shadow-sm border-0 text-center" style="width: 180px;">
+                <a href="@color.RedirectUrl">
+                    <img src="@color.ImageUrl" class="card-img-top img-fluid rounded"
+                         alt="@color.ColorName"
+                         style="width: 450px; height: 200px; object-fit: cover; display: block; margin: auto;">
+                </a>
+                <div class="card-body p-2">
+                    <h6 class="text-muted" style="font-size: 12px;">@color.ColorName</h6>
+
+                    <!-- Silme Butonu -->
+                    <form asp-action="DeleteColor" method="post" class="d-inline" onsubmit="return confirm('Bu rengi silmek istediğinizden emin misiniz?');">
+                        <input type="hidden" name="colorId" value="@color.Id" />
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash-alt"></i> Sil
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
 

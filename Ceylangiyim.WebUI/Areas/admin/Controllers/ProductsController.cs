@@ -48,10 +48,16 @@ namespace Ceylangiyim.WebUI.Areas.admin.Controllers
         // GET: admin/Products/Create
         public IActionResult Create()
         {
+            var model = new Product
+            {
+                ProductColors = new List<ProductColor>()
+            };
+
             ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Name");
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            return View();
+            return View(model);
         }
+
 
 
         [HttpPost]
@@ -87,6 +93,52 @@ namespace Ceylangiyim.WebUI.Areas.admin.Controllers
             return View(product);
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> AddColor(int productId, ProductColor productColor, string colorName, IFormFile image, string redirectUrl)
+        {
+            if (image != null)
+            {
+                productColor.ImageUrl = await FileHelper.FileLoaderAsync(image, "/Img/ProductsColors/");
+
+
+
+                var newColor = new ProductColor
+                {
+                    ProductId = productId,
+                    ColorName = colorName,
+                    ImageUrl = "/Img/ProductsColors/" + image.FileName,
+                    RedirectUrl = redirectUrl
+                };
+
+                _context.ProductColors.Add(newColor);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Edit", new { id = productId });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteColor(int colorId, int productId)
+        {
+            var color = await _context.ProductColors.FindAsync(colorId);
+            if (color == null)
+            {
+                return NotFound();
+            }
+
+            // Dosya varsa sil
+            // FileHelper.FileRemover(color.ImageUrl, "/Img/ProductsColors/");
+             FileHelper.FileRemoverWithColors(color.ImageUrl);
+
+            _context.ProductColors.Remove(color);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Edit", new { id = productId });
+        }
+
+
+
         // GET: admin/Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -95,7 +147,9 @@ namespace Ceylangiyim.WebUI.Areas.admin.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+
+
+            var product = await _context.Products.Include(p => p.ProductColors).FirstOrDefaultAsync(p => p.Id == id);
             if (product == null)
             {
                 return NotFound();
@@ -196,7 +250,8 @@ namespace Ceylangiyim.WebUI.Areas.admin.Controllers
             {
                 if (!string.IsNullOrEmpty(product.Image))
                 {
-                    FileHelper.FileRemover(product.Image, "/Img/Products/");
+                     FileHelper.FileRemover(product.Image, "/Img/Products/");
+                    // FileHelper.FileRemover(product.Image);
                 }
                 _context.Products.Remove(product);
 

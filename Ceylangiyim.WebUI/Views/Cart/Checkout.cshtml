@@ -72,11 +72,36 @@
                     <h4>Sipariş Özeti</h4>
                 </div>
                 <table class="table">
+                    @if (Model.AppliedCouponDiscount > 0)
+                    {
+                        <tr>
+                            <td>Uygulanan Kupon</td>
+                            <td>-@Model.AppliedCouponDiscount</td>
+                        </tr>
+                    }
+                    @* <h2>
+                        Uygulanan kUPON: @Model.AppliedCouponDiscount
+                    </h2> *@
                     <tr>
                         <td>Ürün Toplamı</td>
-                        <td>
-                            @Model.TotalPrice.ToString("c")
-                        </td>
+                        @foreach (var item in Model.CartProducts)
+                        {
+                            @if (item.Product.DiscountRate > 0)
+                            {
+                                <td>
+                                    @(item.Quantity * item.Product.DiscountedPrice.Value)
+                                </td>
+                               
+ 
+                            }
+                            else{
+                                <td>
+                                    @(item.Quantity * item.Product.Price)
+                                </td>
+                              
+                            }
+                        
+                        }
                     </tr>
                     <tr>
                         <td>Kargo</td>

@@ -104,6 +104,15 @@ namespace Ceylangiyim.WebUI.Areas.admin.Controllers
                     if (Image is not null)
                         category.Image = await FileHelper.FileLoaderAsync(Image, "/Img/Categories/");
 
+                    if (!cbResmiSil && Image is null)
+                    {
+                        // Kategorinin mevcut resmini al
+                        var existingCategory = await _context.Categories
+                            .AsNoTracking()
+                            .FirstOrDefaultAsync(c => c.Id == id);
+
+                        category.Image = existingCategory?.Image ?? "default.jpg"; // Eski resmi koru
+                    }
                     _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
@@ -166,6 +175,7 @@ namespace Ceylangiyim.WebUI.Areas.admin.Controllers
                 if (!string.IsNullOrEmpty(category.Image))
                 {
                     FileHelper.FileRemover(category.Image, "/Img/Categories/");
+                   // FileHelper.FileRemover(category.Image);
                 }
 
                 _context.Categories.Remove(category);

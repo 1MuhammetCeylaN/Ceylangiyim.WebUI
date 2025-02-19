@@ -8,5 +8,7 @@ namespace Ceylangiyim.WebUI.Models
         public decimal TotalPrice { get; set; }
         public decimal TotalDiscountedPrice { get; set; }
         public decimal TotalOriginalPrice { get; set; }
+        public bool? IsCoupon { get; set; }
+        public decimal? CouponPrice { get; set; }
     }
 }

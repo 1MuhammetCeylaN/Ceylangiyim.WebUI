@@ -63,8 +63,9 @@ namespace Ceylangiyim.Core.Entities
         public bool size5 { get; set; }
         [Display(Name = "XXL")]
         public bool size6 { get; set; }
-
-
+        public List<ProductColor>? ProductColors { get; set; } // Yeni eklendi
+        [Display(Name="Renk")]
+        public string? Color { get; set; }
 
     }
 }

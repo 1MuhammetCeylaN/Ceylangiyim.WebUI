@@ -42,16 +42,49 @@
             <li class="mega-menu">
                 <a href="#">@anaKategori.Name</a>
                 <ul class="submenu">
-                    @foreach (var altKategori in altKategoriler)
-                    {
-                        <li>
-                            <a href="/Categories/Index/@altKategori.Id">@altKategori.Name</a>
-                        </li>
-                    }
-                    <li class="submenu-divider"></li>
-                    <li>
-                        <a href="/Categories/AllProducts/@anaKategori.Id">Tüm @anaKategori.Name</a>
-                    </li>
+                <div class="container">
+    <div class="row">
+        @{
+            int count = 0;
+            int total = altKategoriler.Count(); // Toplam kategori sayısını al
+        }
+        @foreach (var altKategori in altKategoriler)
+        {
+            if (count % 3 == 0 && count != 0)
+            {
+                @:</div><div class="row"> @* Her 3 elemandan sonra yeni satır *@
+            }
+
+            <div class="col-md-4">
+                <li class="submenu-divider">
+                    <a href="/Categories/Index/@altKategori.Id">@altKategori.Name</a>
+                </li>
+            </div>
+
+            count++;
+        }
+
+        @* Eğer toplam kategori sayısı 3'ün katı değilse, "Tüm Ürünler" butonunu aynı satıra ekle *@
+        @if (count % 3 != 0)
+        {
+            <div class="col-md-4">
+                <li class="submenu-divider">
+                    <a href="/Categories/AllProducts/@anaKategori.Id">Tüm @anaKategori.Name</a>
+                </li>
+            </div>
+        }
+        else
+        {
+            @:</div><div class="row"> @* Yeni satır başlat *@
+            <div class="col-md-4">
+                <li class="submenu-divider">
+                    <a href="/Categories/AllProducts/@anaKategori.Id">Tüm @anaKategori.Name</a>
+                </li>
+            </div>
+        }
+    </div>
+</div>
+
                 </ul>
             </li>
         }

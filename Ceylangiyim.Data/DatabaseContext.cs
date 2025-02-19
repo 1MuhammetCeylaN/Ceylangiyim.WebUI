@@ -27,16 +27,18 @@ namespace Ceylangiyim.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderLine> OrderLines { get; set; }
         public DbSet<CartLine> CartLines { get; set; }
+        public DbSet<ProductColor> ProductColors { get; set; }
+        public DbSet<Coupon> Coupons { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Localhost
-            // optionsBuilder.UseSqlServer(@"Server=LAPTOP-EMJSQFU7\SQLEXPRESS;Database=Eticaret2Db;Trusted_Connection=true;TrustServerCertificate=True; ");
-            // base.OnConfiguring(optionsBuilder);
+           //  optionsBuilder.UseSqlServer(@"Server=LAPTOP-EMJSQFU7\SQLEXPRESS;Database=CeylangiyimDb;Trusted_Connection=true;TrustServerCertificate=True; ");
+           //  base.OnConfiguring(optionsBuilder);
 
 
             // Free Host
              optionsBuilder.UseSqlServer(@"workstation id=MCgiyim.mssql.somee.com;packet size=4096;user id=ceylangiyim_SQLLogin_1;pwd=zxayl6tpk7;data source=MCgiyim.mssql.somee.com;persist security info=False;initial catalog=MCgiyim;TrustServerCertificate=True");
-            base.OnConfiguring(optionsBuilder);
+             base.OnConfiguring(optionsBuilder);
 
             // optionsBuilder.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
 

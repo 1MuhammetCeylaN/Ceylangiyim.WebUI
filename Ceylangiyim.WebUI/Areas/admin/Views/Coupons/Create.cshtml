@@ -1,0 +1,39 @@
+﻿@model Coupon
+
+@{
+    ViewData["Title"] = "Kupon Ekle";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label for="Code">Kupon Kodu</label>
+        <input type="text" class="form-control" id="Code" name="Code" required />
+        <span asp-validation-for="Code" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="Discount">İndirim Oranı (%)</label>
+        <input type="number" class="form-control" id="Discount" name="Discount"  />
+        <span asp-validation-for="Discount" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label for="DiscountAmount">İndirim Tutarı (TL)</label>
+        <input type="number" class="form-control" id="DiscountAmount" name="DiscountAmount" />
+        <span asp-validation-for="DiscountAmount" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label for="ExpirationDate">Geçerlilik Tarihi</label>
+        <input type="date" class="form-control" id="ExpirationDate" name="ExpirationDate" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Kupon Ekle</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -41,6 +41,7 @@ namespace Ceylangiyim.WebUI.Controllers
             var product = await _service.GetQueryable()
                 .Include(p => p.Brand)
                 .Include(p => p.Category)
+                .Include(p=>p.ProductColors)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
@@ -51,8 +52,13 @@ namespace Ceylangiyim.WebUI.Controllers
             {
                 Product = product,
                 // RelatedProducts = _context.Products.Where(p => p.IsActive && p.CategoryId == product.CategoryId && p.Id != product.Id)
-                RelatedProducts = _service.GetQueryable().Where(p => p.IsActive && p.CategoryId == product.CategoryId && p.Id != product.Id)
+                RelatedProducts = _service.GetQueryable().Where(p => p.IsActive && p.CategoryId == product.CategoryId && p.Id != product.Id).ToList()
             };
+
+            if (product.ProductColors == null)
+            {
+                product.ProductColors = new List<ProductColor>();
+            }
 
             model.PopulateSizeSelectList(product);
             return View(model);

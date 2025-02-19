@@ -3,7 +3,15 @@
 @{
     ViewData["Title"] = "Sepetim";
 }
+@if (TempData["CouponError"] != null)
+{
+    <div class="alert alert-danger">@TempData["CouponError"]</div>
+}
 
+@if (TempData["CouponSuccess"] != null)
+{
+    <div class="alert alert-success">@TempData["CouponSuccess"]</div>
+}
 <section class="cart-area pt-100 pb-100">
     <div class="container">
         <div class="row">
@@ -100,32 +108,51 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="coupon-all">
+                                <form asp-action="Index" asp-controller="Cart" method="post">
                                     <div class="coupon">
-                                        <input id="coupon_code" class="input-text" name="coupon_code" value="" placeholder="Coupon code" type="text">
-                                        <button class="btn theme-btn-2" name="apply_coupon" type="submit">Kuponu Uygula</button>
+                                        <input id="coupon_code" class="input-text" name="couponCode" placeholder="Kupon kodu" type="text"
+                                               value="@ViewBag.CouponCode" required>
+                                        <button class="btn theme-btn-2" type="submit">Kuponu Uygula</button>
                                     </div>
+                                </form>
+
 
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-5 ml-auto">
-                                <div class="cart-page-total">
-                                    <h2>Sepet Toplamı</h2>
-                                    <ul class="mb-20">
-                                        <li>Ara Toplam <span>@Model.TotalPrice.ToString("c")</span></li>
-                                        <li>Kargo <span> @(Model.TotalPrice > 999 ? "Ücretsiz" : Model.CartLines.Any() ? "99₺" : "0₺")</span></li>
-                                        <li>
-                                            Sipariş Toplamı <span>
-                                                @(Model.TotalPrice > 999 ? Model.TotalPrice.ToString("c") : (Model.CartLines.Any() ? Model.TotalPrice + 99 : Model.TotalPrice.ToString("c")))
-                                            </span>
-                                        </li>
-                                    </ul>
-                                    <a class="btn theme-btn mt-2" href="/">Alışverişe devam et</a>
-                                    <a class="btn theme-btn mt-2" href="/Cart/Checkout">Satın Al</a>
-                                </div>
+                    <div class="row">
+                        <div class="col-md-5 ml-auto">
+                            <div class="cart-page-total">
+                                <h2>Sepet Toplamı</h2>
+
+                                <ul class="mb-20">
+                                    @if (ViewBag.DiscountAmount != null && Convert.ToDecimal(ViewBag.DiscountAmount) > 0)
+                                    {
+                                        <li>Uygulanan Kupon <span>(@ViewBag.CouponCode)   -@Convert.ToDecimal(ViewBag.DiscountAmount).ToString("c")</span></li>
+                                    }
+                                    <li>Ara Toplam <span>@Model.TotalPrice.ToString("c")</span></li>
+
+                                    <li>
+                                        Kargo
+                                        <span>
+                                            @(Model.TotalPrice > 999 ? "Ücretsiz" : Model.CartLines.Any() ? "99₺" : "0₺")
+                                        </span>
+                                    </li>
+
+                                   
+
+                                    <li>
+                                        Sipariş Toplamı <span>
+                                            @(Model.TotalPrice > 999 ? Model.TotalPrice.ToString("c") : (Model.CartLines.Any() ? Model.TotalPrice + 99 : Model.TotalPrice.ToString("c")))
+                                        </span>
+                                    </li>
+                                </ul>
+                                <a class="btn theme-btn mt-2" href="/">Alışverişe devam et</a>
+                                <a class="btn theme-btn mt-2" href="/Cart/Checkout">Satın Al</a>
                             </div>
                         </div>
+                    </div>
+
                 </div>
             }
             else

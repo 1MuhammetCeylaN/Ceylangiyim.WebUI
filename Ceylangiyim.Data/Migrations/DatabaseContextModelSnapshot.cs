@@ -136,7 +136,7 @@ namespace Ceylangiyim.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2025, 2, 11, 18, 32, 36, 631, DateTimeKind.Local).AddTicks(2571),
+                            CreateDate = new DateTime(2025, 2, 14, 20, 39, 53, 507, DateTimeKind.Local).AddTicks(9751),
                             Email = "admin@gmail.com",
                             IsActive = true,
                             IsAdmin = true,
@@ -144,7 +144,7 @@ namespace Ceylangiyim.Data.Migrations
                             Password = "123456*",
                             Phone = "12345",
                             SurName = "adminsurname",
-                            UserGuid = new Guid("ed93d867-392f-43eb-9b37-e151984a334e"),
+                            UserGuid = new Guid("aa1bf071-fdf1-4205-9344-c97f7bbd6647"),
                             UserName = "Admin"
                         });
                 });
@@ -255,7 +255,7 @@ namespace Ceylangiyim.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2025, 2, 11, 18, 32, 36, 631, DateTimeKind.Local).AddTicks(9486),
+                            CreateDate = new DateTime(2025, 2, 14, 20, 39, 53, 508, DateTimeKind.Local).AddTicks(2621),
                             Image = "1.jpg",
                             IsActive = true,
                             IsTopMenu = true,
@@ -266,7 +266,7 @@ namespace Ceylangiyim.Data.Migrations
                         new
                         {
                             Id = 2,
-                            CreateDate = new DateTime(2025, 2, 11, 18, 32, 36, 631, DateTimeKind.Local).AddTicks(9502),
+                            CreateDate = new DateTime(2025, 2, 14, 20, 39, 53, 508, DateTimeKind.Local).AddTicks(2634),
                             Image = "2.jpg",
                             IsActive = true,
                             IsTopMenu = true,
@@ -312,6 +312,35 @@ namespace Ceylangiyim.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Contacts");
+                });
+
+            modelBuilder.Entity("Ceylangiyim.Core.Entities.Coupon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("Discount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Coupons");
                 });
 
             modelBuilder.Entity("Ceylangiyim.Core.Entities.News", b =>
@@ -446,6 +475,9 @@ namespace Ceylangiyim.Data.Migrations
                     b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
@@ -524,6 +556,33 @@ namespace Ceylangiyim.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Ceylangiyim.Core.Entities.ProductColor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ColorName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RedirectUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductColors");
                 });
 
             modelBuilder.Entity("Ceylangiyim.Core.Entities.Slider", b =>
@@ -621,6 +680,17 @@ namespace Ceylangiyim.Data.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Ceylangiyim.Core.Entities.ProductColor", b =>
+                {
+                    b.HasOne("Ceylangiyim.Core.Entities.Product", "Product")
+                        .WithMany("ProductColors")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Ceylangiyim.Core.Entities.AppUser", b =>
                 {
                     b.Navigation("Addresses");
@@ -639,6 +709,11 @@ namespace Ceylangiyim.Data.Migrations
             modelBuilder.Entity("Ceylangiyim.Core.Entities.Order", b =>
                 {
                     b.Navigation("OrderLines");
+                });
+
+            modelBuilder.Entity("Ceylangiyim.Core.Entities.Product", b =>
+                {
+                    b.Navigation("ProductColors");
                 });
 #pragma warning restore 612, 618
         }

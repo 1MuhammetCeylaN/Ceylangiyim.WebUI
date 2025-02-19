@@ -31,5 +31,25 @@
             return false;
         }
 
+        public static bool FileRemoverWithColors(string imageUrl)
+        {
+            if (string.IsNullOrEmpty(imageUrl))
+                return false;
+
+            // Eğer tam yol "/Img/ProductsColors/dosya.jpg" gibi bir şeyse, başındaki '/' işaretini kaldır
+            if (imageUrl.StartsWith("/"))
+                imageUrl = imageUrl.Substring(1);
+
+            // Tam dosya yolunu oluştur
+            string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", imageUrl);
+
+            if (File.Exists(filePath))
+            {
+                File.Delete(filePath);
+                return true;
+            }
+            return false;
+        }
+
     }
 }
