@@ -37,7 +37,7 @@ namespace Ceylangiyim.Data
 
 
             // Free Host
-             optionsBuilder.UseSqlServer(@"workstation id=MCgiyim.mssql.somee.com;packet size=4096;user id=ceylangiyim_SQLLogin_1;pwd=zxayl6tpk7;data source=MCgiyim.mssql.somee.com;persist security info=False;initial catalog=MCgiyim;TrustServerCertificate=True");
+             optionsBuilder.UseSqlServer(@"workstation id=mcgiyim.mssql.somee.com;packet size=4096;user id=ceylangiyim_SQLLogin_1;pwd=zxayl6tpk7;data source=mcgiyim.mssql.somee.com;persist security info=False;initial catalog=mcgiyim;TrustServerCertificate=True");
              base.OnConfiguring(optionsBuilder);
 
             // optionsBuilder.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
