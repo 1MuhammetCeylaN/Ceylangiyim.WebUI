@@ -32,13 +32,13 @@ namespace Ceylangiyim.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Localhost
-           // optionsBuilder.UseSqlServer(@"Server=LAPTOP-EMJSQFU7\SQLEXPRESS;Database=CeylangiyimDb;Trusted_Connection=true;TrustServerCertificate=True; ");
-           //  base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlServer(@"Server=LAPTOP-EMJSQFU7\SQLEXPRESS;Database=CeylangiyimDb;Trusted_Connection=true;TrustServerCertificate=True; ");
+             base.OnConfiguring(optionsBuilder);
 
 
             // Free Host
-             optionsBuilder.UseSqlServer(@"workstation id=mcgiyim20.mssql.somee.com;packet size=4096;user id=ceylangiyim_SQLLogin_2;pwd=n4xfto3aw3;data source=mcgiyim20.mssql.somee.com;persist security info=False;initial catalog=mcgiyim20;TrustServerCertificate=True");
-             base.OnConfiguring(optionsBuilder);
+            // optionsBuilder.UseSqlServer(@"workstation id=mcgiyim20.mssql.somee.com;packet size=4096;user id=ceylangiyim_SQLLogin_2;pwd=n4xfto3aw3;data source=mcgiyim20.mssql.somee.com;persist security info=False;initial catalog=mcgiyim20;TrustServerCertificate=True");
+            // base.OnConfiguring(optionsBuilder);
 
             // optionsBuilder.ConfigureWarnings(warnings => warnings.Ignore(RelationalEventId.PendingModelChangesWarning));
 

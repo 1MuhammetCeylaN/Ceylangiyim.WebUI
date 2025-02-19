@@ -536,7 +536,7 @@ namespace Ceylangiyim.WebUI.Controllers
                     Name = item.Product.Name,
                     Category1 = "Kategori",
                     ItemType = BasketItemType.PHYSICAL.ToString(),
-                    Price = (unitPrice * item.Quantity - (discountAmount / 2)).ToString().Replace(",", ".")
+                    Price = (unitPrice * item.Quantity - (discountAmount / cart.CartLines.Count )).ToString().Replace(",", ".")
                 });
             }
 
