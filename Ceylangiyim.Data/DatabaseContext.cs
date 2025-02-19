@@ -32,7 +32,7 @@ namespace Ceylangiyim.Data
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             // Localhost
-           //  optionsBuilder.UseSqlServer(@"Server=LAPTOP-EMJSQFU7\SQLEXPRESS;Database=CeylangiyimDb;Trusted_Connection=true;TrustServerCertificate=True; ");
+           // optionsBuilder.UseSqlServer(@"Server=LAPTOP-EMJSQFU7\SQLEXPRESS;Database=CeylangiyimDb;Trusted_Connection=true;TrustServerCertificate=True; ");
            //  base.OnConfiguring(optionsBuilder);
 
 
